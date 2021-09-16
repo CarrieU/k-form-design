@@ -69,8 +69,13 @@
       "@vue/prettier"
     ],
     "rules": {
-      "prefer-const": "error",
-      "no-console": 0
+      "prefer-const": "off",
+      "no-unused-vars": "off",
+      "no-console": 0,
+      "quotes": [1, "single"],
+      "quote-props": 0,
+      "comma-dangle": [1, "never"],
+      "no-debugger": 1
     },
     "parserOptions": {
       "parser": "babel-eslint"
