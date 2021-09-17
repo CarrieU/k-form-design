@@ -126,6 +126,7 @@
             :startType="startType"
             ref="KFCP"
             @handleSetSelectItem="handleSetSelectItem"
+            @spliceCascade="spliceCascade"
           />
           <!-- 操作区域 start -->
           <k-json-modal ref="jsonModal" />
@@ -154,6 +155,18 @@
                 :selectItem="selectItem"
                 :hideModel="hideModel"
               />
+            </a-tab-pane>
+            <a-tab-pane :key="3" tab="控件联动设置">
+              <!-- {{ formCascade }} -->
+              <formItemCascade
+                class="form-item-cascade"
+                :selectItem="selectItem"
+                :hideModel="hideModel"
+                :formItemList="formItemList"
+                :formCascade="formCascade"
+                @spliceCascade="spliceCascade"
+              />
+              <a-button @click="test">打印</a-button>
             </a-tab-pane>
           </a-tabs>
         </aside>
@@ -189,6 +202,8 @@ import {
 } from "./config/formItemsConfig";
 import formItemProperties from "./module/formItemProperties";
 import formProperties from "./module/formProperties";
+import formItemCascade from "./module/formCascade";
+
 export default {
   name: "KFormDesign",
   props: {
@@ -296,7 +311,8 @@ export default {
           wrapperCol: { xs: 18, sm: 18, md: 18, lg: 18, xl: 18, xxl: 18 },
           hideRequiredMark: false,
           customStyle: ""
-        }
+        },
+        cascade: []
       },
       previewOptions: {
         width: 850
@@ -317,12 +333,14 @@ export default {
     previewModal,
     kFormComponentPanel,
     formItemProperties,
-    formProperties
+    formProperties,
+    formItemCascade
   },
   watch: {
     data: {
       handler(e) {
         this.$nextTick(() => {
+          // console.log('data has changed:', e)
           this.revoke.push(e);
         });
       },
@@ -349,6 +367,12 @@ export default {
       } else {
         return ["1"];
       }
+    },
+    formItemList() {
+      return this.data.list.map(el => ({key: el.key, value:el.model, text: el.label}))
+    },
+    formCascade() {
+      return this.data.cascade.filter(el => el.source[0].id == this.selectItem.key)
     }
   },
   methods: {
@@ -577,6 +601,40 @@ export default {
     },
     handleClose() {
       this.$emit("close");
+    },
+    // 增加，删除时更新cascade(修改时因为是引用类型，不需要此操作)
+    spliceCascade(item, type) {
+      if (type === 'add') {
+        console.log(this.data.cascade, item.key)
+        this.data.cascade = [...this.data.cascade, ...[item]]
+      } else if (type === 'removeByIndex') {
+        this.data.cascade.splice(item, 1)
+      } else if (type === 'remove') {
+        this.data.cascade = this.data.cascade.filter(el => {
+          let flag = true
+          el.source.forEach(s => {
+            if(s.id == item) {
+              flag = false
+              return flag
+            }
+          })
+          if(flag) {
+            el.target.forEach(s => {
+              if(s.id == item) {
+                flag = false
+                return flag
+              }
+            })
+          }
+          return flag
+        })
+        console.log(item)
+        console.log(this.data.cascade)
+        // this.data.cascade.splice(item, 1)
+      }
+    },
+    test() {
+      console.log(this.data.cascade)
     }
   },
   created() {

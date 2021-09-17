@@ -288,9 +288,12 @@ export default {
             return false;
           }
         });
+        // console.log(array, this.selectItem.key)
+        // 后续增加：删除json中级联相关部分
+        this.$emit('spliceCascade', this.selectItem.key, 'remove')
+
         return array;
       };
-
       this.data.list = traverse(this.data.list);
     },
     handleDownMerge() {

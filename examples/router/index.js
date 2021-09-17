@@ -8,7 +8,13 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      redirect: "formDesign"
+      redirect: "myForm"
+    },
+    {
+      path: "/myForm",
+      name: "myForm",
+      //D:\GitHub\k-form-design\examples\views\myForm\index.vue
+      component: () => import("../views/myForm/index.vue")
     },
     {
       path: "/formDesign",

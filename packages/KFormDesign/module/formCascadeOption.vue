@@ -1,0 +1,92 @@
+<template>
+  <div class="option-change-container">
+    
+  </div>
+</template>
+<script>
+/*
+ * author Carrie
+ * date 2021-09-16
+ * description 修改多选、下拉、单选等控件options的组件，添加移除校验规制的组件
+ */
+export default {
+  name: "KChangeOption",
+  props: {
+    value: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      default: "option"
+    }
+  },
+  methods: {
+    handleAdd() {
+      // 添加
+      const addData = [
+        ...this.value,
+        {
+          value: `${this.value.length + 1}`,
+          label: "选项" + (this.value.length + 1),
+          list: this.type === "tab" ? [] : undefined
+        }
+      ];
+      this.$emit("input", addData);
+    },
+    handleAddCol() {
+      // 添加栅格Col
+      const addData = [
+        ...this.value,
+        {
+          span: 12,
+          list: []
+        }
+      ];
+      this.$emit("input", addData);
+    },
+    handleAddRules() {
+      const addData = [
+        ...this.value,
+        {
+          pattern: "",
+          message: ""
+        }
+      ];
+      this.$emit("input", addData);
+    },
+    handleDelete(deleteIndex) {
+      // 删除
+      this.$emit(
+        "input",
+        this.value.filter((val, index) => index !== deleteIndex)
+      );
+    }
+  }
+};
+</script>
+<style lang="less" scoped>
+.option-change-container {
+  width: calc(100% - 8px);
+}
+.option-change-box {
+  height: 38px;
+  padding-bottom: 6px;
+  .option-delete-box {
+    margin-top: 3px;
+    background: #ffe9e9;
+    color: #f22;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: all 0.3s;
+    &:hover {
+      background: #f22;
+      color: #fff;
+    }
+  }
+}
+</style>
