@@ -166,7 +166,6 @@
                 :formCascade="formCascade"
                 @spliceCascade="spliceCascade"
               />
-              <a-button @click="test">打印</a-button>
             </a-tab-pane>
           </a-tabs>
         </aside>
@@ -467,7 +466,8 @@ export default {
           wrapperCol: { xs: 18, sm: 18, md: 18, lg: 18, xl: 18, xxl: 18 },
           hideRequiredMark: false,
           customStyle: ""
-        }
+        },
+        cascade: []
       };
       this.handleSetSelectItem({ key: "" });
       this.$message.success("已清空");
@@ -633,9 +633,6 @@ export default {
         // this.data.cascade.splice(item, 1)
       }
     },
-    test() {
-      console.log(this.data.cascade)
-    }
   },
   created() {
     this.revoke = new Revoke();

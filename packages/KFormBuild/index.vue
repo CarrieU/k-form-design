@@ -11,6 +11,7 @@
       @submit="handleSubmit"
       :style="value.config.customStyle"
     >
+    <button @click="reset">reset</button>
       <buildBlocks
         ref="buildBlocks"
         @handleReset="reset"
@@ -120,6 +121,7 @@ export default {
             if (this.outputString) {
               // 需要所有value转成字符串
               for (const key in values) {
+                debugger
                 const type = typeof values[key];
                 if (type === "string" || type === "undefined") {
                   continue;
@@ -220,7 +222,63 @@ export default {
     },
     handleChange(value, key) {
       // 触发change事件
+      // console.log('111', value, key, this.value)
+      this.linkageItems(value, key, this.value)
       this.$emit("change", value, key);
+    },
+    linkageItems(value, key, data) {
+      let list = this.getItemByKey(key, data.cascade)
+      const that = this
+      list.forEach(linkage => {
+        let targetItem = data.list.find(el => el.key === linkage.target[0].id)
+        that.linkageItem(value, key, linkage, targetItem)
+      })
+    },
+    linkageItem(value, key, linkage, targetItem) {
+      // 联动对应关系
+      // let linkage = this.getItemByKey(key, data.cascade)
+      // 判断：在联动关系json中，source是否包含key对应的控件
+      if (!linkage || !linkage.enable || !linkage.target || linkage.target.length <= 0 ) {
+        console.log('没有联动控件（不需要联动）')
+        return
+      }
+      // 得到控件属性
+      // let targetItem = data.list.find(el => el.key === linkage.target[0].id)
+      // let sourceItem = data.list.find(el => el.key === linkage.source[0].id)
+      if(!targetItem) {
+        console.log('没有联动控件(控件已删除)')
+        return
+      }
+      
+      // 存在联动关系
+      let effect = linkage.effect
+      let source = linkage.source.find(ele => ele.id === key)
+      let rule = source.ruleType == 0 ? `^${source.ruleValue}$` : source.ruleReg
+      // 校验
+      const reg = new RegExp(rule)
+      if(!reg.test(value)) {
+        console.log('校验不通过','rule:',rule, ' ,targetValue:', value)
+        if (effect === 'hide' || effect === 'show') {
+          targetItem.options.hidden = effect === 'show'
+        } else if (effect === 'read' || effect === 'edit') {
+          targetItem.options.disabled = effect === 'edit'
+        } 
+      } else {
+        console.log('校验通过','rule:',rule, ' ,targetValue:', value)
+        if (effect === 'hide' || effect === 'show') {
+          targetItem.options.hidden = effect === 'hide'
+        } else if (effect === 'read' || effect === 'edit') {
+          targetItem.options.disabled = effect === 'read'
+        } 
+      }
+    },
+    getItemByKey(key, cascadelist) {
+      return cascadelist.filter(el => {
+        let ele = el.source.find(ele => ele.id === key)
+        if (ele) {
+          return true
+        } 
+      })
     }
   },
   mounted() {

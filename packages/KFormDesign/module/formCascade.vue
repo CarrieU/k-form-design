@@ -14,7 +14,7 @@
         </a-form-item>
         <template v-for="(item, index) in data">
           <a-form-item
-            :label="`联动配置${item.key}`"
+            :label="`联动配置${index+1}`"
             :key="item.key"
             v-if="item.source.length > 0"
           >
@@ -40,7 +40,7 @@
             <a-row>
               <a-col>
                 <a-textarea v-if="item.source[0].ruleType==0" v-model="item.source[0].ruleValue" placeholder="请输入规则内容"></a-textarea>
-                <a-textarea v-else v-model="item.source[0].ruleValue" placeholder="请输入规则内容(正则表达式)"></a-textarea>
+                <a-textarea v-else v-model="item.source[0].ruleReg" placeholder="请输入规则内容(正则表达式)"></a-textarea>
               </a-col>
             </a-row>
             <!-- <a-row>
