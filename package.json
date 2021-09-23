@@ -72,7 +72,10 @@
       "prefer-const": "off",
       "no-unused-vars": "off",
       "no-console": 0,
-      "quotes": [1, "single"],
+      "quotes": [1, "single", {
+        "avoidEscape": false,
+        "allowTemplateLiterals": true
+      }],
       "quote-props": 0,
       "comma-dangle": [1, "never"],
       "no-debugger": 1

@@ -27,6 +27,7 @@
       ].includes(record.type)
     "
     :label-col="
+      record.hideLabel?{ style: `width:0px` }:
       formConfig.layout === 'horizontal'
         ? formConfig.labelLayout === 'flex'
           ? { style: `width:${formConfig.labelWidth}px` }
@@ -444,6 +445,7 @@ export default {
       if (e && e.target) {
         value = e.target.value;
       }
+      // console.log('kformitem record:', this.record)
       // 传递change事件
       this.$emit("change", value, key);
     }

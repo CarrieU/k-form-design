@@ -189,7 +189,7 @@ export default {
       }
     },
     handleChange(value, key) {
-      this.$emit("change", value, this.record.key);
+      this.$emit("change", value, key);
     }
   },
   watch: {

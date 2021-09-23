@@ -368,7 +368,7 @@ export default {
       }
     },
     formItemList() {
-      return this.data.list.map(el => ({key: el.key, value:el.model, text: el.label}))
+      return this.getFormItemList(this.data.list)
     },
     formCascade() {
       return this.data.cascade.filter(el => el.source[0].id == this.selectItem.key)
@@ -381,11 +381,13 @@ export default {
       this.$set(list, index, {
         ...list[index],
         key,
-        model: key
+        model: key,
+        hideLabel: false,
       });
       if (this.noModel.includes(list[index].type)) {
         // 删除不需要的model属性
         delete list[index].model;
+        delete list[index].showLabel;
       }
     },
     handleListPush(item) {
@@ -633,6 +635,25 @@ export default {
         // this.data.cascade.splice(item, 1)
       }
     },
+    // 递归获取控件（含有model属性）
+    getFormItemList(items) {
+      let list = []
+      items.forEach(el => {
+        if (!el.model) {
+          // if(el.type) {
+          //   list.push({key: el.key, value:el.type, text: el.label})
+          // }
+          for(let key in el) {
+            if(el[key] instanceof Array) {
+              list = [...list, ...this.getFormItemList(el[key])]
+            }
+          }
+        } else {
+          list.push({key: el.key, value:el.model, text: el.label})
+        }
+      })
+      return list
+    }
   },
   created() {
     this.revoke = new Revoke();

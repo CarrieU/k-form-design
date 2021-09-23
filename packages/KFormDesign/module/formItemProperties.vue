@@ -13,6 +13,10 @@
           label="标签"
         >
           <a-input v-model="selectItem.label" placeholder="请输入" />
+          <kCheckbox
+            v-model="selectItem.hideLabel"
+            label="隐藏标签"
+          />
         </a-form-item>
 
         <a-form-item

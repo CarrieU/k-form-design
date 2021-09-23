@@ -11,7 +11,6 @@
       @submit="handleSubmit"
       :style="value.config.customStyle"
     >
-    <button @click="reset">reset</button>
       <buildBlocks
         ref="buildBlocks"
         @handleReset="reset"
@@ -222,15 +221,22 @@ export default {
     },
     handleChange(value, key) {
       // 触发change事件
-      // console.log('111', value, key, this.value)
-      this.linkageItems(value, key, this.value)
+      // 获取主动控件信息
+      let formItem = this.getFormItemRecord(this.value.list, key, 'model')
+      // console.log('kFormBuild ', value, key, formItem)
+      // 遍历被动控件，执行相应操作
+      this.linkageItems(value, formItem.key, this.value)
       this.$emit("change", value, key);
     },
     linkageItems(value, key, data) {
       let list = this.getItemByKey(key, data.cascade)
       const that = this
+      // 遍历被动控件
       list.forEach(linkage => {
-        let targetItem = data.list.find(el => el.key === linkage.target[0].id)
+        // let targetItem = data.list.find(el => el.key === linkage.target[0].id)
+        let targetItem = this.getFormItemRecord(data.list, linkage.target[0].id, 'key')
+        // console.log(targetItem)
+        // 对单个被动控件执行指定变形操作
         that.linkageItem(value, key, linkage, targetItem)
       })
     },
@@ -279,6 +285,29 @@ export default {
           return true
         } 
       })
+    },
+    // 根据关键词递归获取控件
+    getFormItemRecord(items, value, mode) {
+      let rst
+      items.find(el => {
+        if (!el.model) {
+          for(let key in el) {
+            if(el[key] instanceof Array) {
+              rst = this.getFormItemRecord(el[key], value, mode)
+              if(rst) return true
+            }
+          }
+          return false
+        } else if(el[mode] == value){
+          rst = el
+          return true
+        } else {
+          return false
+        }
+      })
+      if(rst) {
+        return rst
+      }
     }
   },
   mounted() {
